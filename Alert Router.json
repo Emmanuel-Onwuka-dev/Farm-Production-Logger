@@ -1,0 +1,146 @@
+{
+  "name": "Alert Router",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -480,
+        -32
+      ],
+      "id": "77168129-b8e2-479c-8c05-2c37400131d0",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "chatId": "=7639067062",
+        "text": "=✅ Daily Production Log — Chinyere Farms\nDate: {{ $json.fields.Date }}\nEggs collected: {{ $json.fields.EggsCollected }} \n\nBird mortality: {{ $json.fields.BirdMortalityRate }} % (normal)\n\nFish mortality: {{ $json.fields.FishMortalityRate }}(normal) \n\nAll metrics within safe range.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -48,
+        112
+      ],
+      "id": "ccb2a69e-c1b0-4026-b950-4a7180460975",
+      "name": "Routine Summary",
+      "webhookId": "dfd071b1-c037-4b48-97f9-d750cd01c4f5",
+      "retryOnFail": true,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "telegramApi": {
+          "id": "gVCc6F4GRlyO42Wy",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "7639067062",
+        "text": "=🚨 Mortality Alert — Chinyere Farms\n\nDate: {{ $json.fields.Date }}\nStatus: {{ $json.fields.AlertStatus }}\n\nBird mortality: {{ $json.fields.BirdMortalityRate }}% ({{ $json.fields.BirdDeaths }} of {{ $json.fields.TotalBirds }})\nFish mortality: {{ $json.fields.FishMortalityRate }}% ({{ $json.fields.FishDeaths }} of {{ $json.fields.TotalFish }})\n\nFeed variance: {{ $json.fields.FeedVariancePercent }}%\nExpected feed: {{ $json.fields.ExpectedBirdFeedKg + $json.fields.ExpectedFishFeedKg }} kg\nActual feed used: {{ $json.fields.ActualFeedUsedKg }} kg\n\nPlease inspect immediately.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -64,
+        -128
+      ],
+      "id": "0345adbb-6ad4-4778-bd15-4146199e3f1b",
+      "name": "Urgent Alert",
+      "webhookId": "44a56f92-abf6-4ddb-9cde-fbd736763837",
+      "retryOnFail": true,
+      "waitBetweenTries": 2000,
+      "credentials": {
+        "telegramApi": {
+          "id": "gVCc6F4GRlyO42Wy",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "0c58403f-b429-4cab-8783-16b85fe60a33",
+              "leftValue": "={{ $json.fields.AlertStatus }}",
+              "rightValue": "Normal",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -256,
+        -16
+      ],
+      "id": "824b40b1-d740-40fe-b4a5-6718843a9ee0",
+      "name": "Check for Alerts"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Check for Alerts": {
+      "main": [
+        [
+          {
+            "node": "Urgent Alert",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Routine Summary",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Check for Alerts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "06616054-b147-41a2-a3e6-591119e6a281",
+  "meta": {
+    "instanceId": "e87efae1c50ccaa3fe6b24c7b478b0c958003e76127c57c9b28fb1381f5f2812"
+  },
+  "id": "PC3TaT0VInkhccM1",
+  "tags": []
+}

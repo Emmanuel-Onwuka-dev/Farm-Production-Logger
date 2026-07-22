@@ -1,0 +1,646 @@
+{
+  "name": "Production logger 2.0",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Chinyere Farms — Daily Production Log",
+        "formDescription": "Enter today's poultry and aquaculture data",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Date",
+              "fieldType": "date"
+            },
+            {
+              "fieldType": "html",
+              "html": "<h3>🐔 Poultry Section</h3>"
+            },
+            {
+              "fieldLabel": "Eggs Collected",
+              "fieldType": "number"
+            },
+            {
+              "fieldLabel": "Bird Deaths Today",
+              "fieldType": "number"
+            },
+            {
+              "fieldType": "html"
+            },
+            {
+              "fieldLabel": "Pond ID"
+            },
+            {
+              "fieldLabel": "Avergae Fish Weight (kg)",
+              "fieldType": "number"
+            },
+            {
+              "fieldLabel": "Fish Deaths Today",
+              "fieldType": "number"
+            },
+            {
+              "fieldLabel": "Actual Bird Feed Used (kg)",
+              "fieldType": "number"
+            },
+            {
+              "fieldLabel": "Actual Fish Feed Used (kg)",
+              "fieldType": "number"
+            }
+          ]
+        },
+        "responseMode": "lastNode",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        -256,
+        -32
+      ],
+      "id": "9a6264c8-f9de-4855-945c-4b4f25c796ca",
+      "name": "On form submission",
+      "webhookId": "7c6798c6-32b0-4551-a6e8-aad014b63be9"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "fc489dee-f5bb-42a8-a116-f84461188ef3",
+              "name": "eggsCollected",
+              "value": "={{ $json['Eggs Collected'] }}",
+              "type": "number"
+            },
+            {
+              "id": "4bb26192-bb5b-4006-9350-90fcc30f049a",
+              "name": "birdDeaths",
+              "value": "={{ $json['Bird Deaths Today'] }}",
+              "type": "number"
+            },
+            {
+              "id": "129a6289-26ad-4dbd-b501-305928c1bacb",
+              "name": "pondId",
+              "value": "={{ $json['Pond ID'] }}",
+              "type": "string"
+            },
+            {
+              "id": "99ee4f22-11d6-4b84-8e9d-ecb5acc4e743",
+              "name": "avgFishWeight",
+              "value": "={{ $json[\"Avergae Fish Weight (kg)\"] }}",
+              "type": "number"
+            },
+            {
+              "id": "70117271-262c-4c16-8b32-7ffa28f77fc6",
+              "name": "fishDeaths",
+              "value": "={{ $json['Fish Deaths Today'] }}",
+              "type": "number"
+            },
+            {
+              "id": "e689c5d0-92de-4837-8aaf-3783afd62260",
+              "name": "date",
+              "value": "={{ $json['Date'] || $now.format('yyyy-MM-dd') }}",
+              "type": "string"
+            },
+            {
+              "id": "0428d5d1-a604-47a6-bad8-60f308b907c9",
+              "name": "actualBirdFeedUsed",
+              "value": "={{ $json[\"Actual Bird Feed Used (kg)\"] }}",
+              "type": "number"
+            },
+            {
+              "id": "0767d949-a274-428a-8f86-6dbdf7a43aaa",
+              "name": "actualFishFeedUsed",
+              "value": "={{ $json[\"Actual Fish Feed Used (kg)\"] }}",
+              "type": "number"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        -48,
+        -32
+      ],
+      "id": "dfb44865-ea5e-413f-a17d-13d42b706024",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appjtNC5kvcpxWBKa",
+          "mode": "list",
+          "cachedResultName": "Farm Operations",
+          "cachedResultUrl": "https://airtable.com/appjtNC5kvcpxWBKa"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblqEgjkTUAnAt2nZ",
+          "mode": "list",
+          "cachedResultName": "Production Log",
+          "cachedResultUrl": "https://airtable.com/appjtNC5kvcpxWBKa/tblqEgjkTUAnAt2nZ"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "EggsCollected": "={{ $json.eggsCollected }}",
+            "TotalBirds": "={{ $json.totalBirds }}",
+            "BirdDeaths": "={{ $json.birdDeaths }}",
+            "BirdMortalityRate": "={{ $json.birdMortalityRate }}",
+            "AvgFishWeight": "={{ $json.avgFishWeight }}",
+            "TotalFish": "={{ $json.totalFish }}",
+            "FishDeaths": "={{ $json.fishDeaths }}",
+            "FishMortalityRate": "={{ $json.fishMortalityRate }}",
+            "Date": "={{ $json.date }}",
+            "PondID": "={{ $json.pondId }}",
+            "AlertStatus": "={{ $json.alertStatus }}",
+            "ExpectedBirdFeedKg": "={{ $json.expectedBirdFeedKg }}",
+            "ExpectedFishFeedKg": "={{ $json.expectedFishFeedKg }}",
+            "ActualFeedUsedKg": "={{ $json.actualFeedUsedKg }}",
+            "FeedVariancePercent": "={{ $json.feedVariancePercent }}",
+            "ClosingBirdStock": 0,
+            "ClosingFishStock": 0
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "EggsCollected",
+              "displayName": "EggsCollected",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "TotalBirds",
+              "displayName": "TotalBirds",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "BirdDeaths",
+              "displayName": "BirdDeaths",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "BirdMortalityRate",
+              "displayName": "BirdMortalityRate",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "PondID",
+              "displayName": "PondID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "AvgFishWeight",
+              "displayName": "AvgFishWeight",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "TotalFish",
+              "displayName": "TotalFish",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "FishDeaths",
+              "displayName": "FishDeaths",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "FishMortalityRate",
+              "displayName": "FishMortalityRate",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "AlertStatus",
+              "displayName": "AlertStatus",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Normal",
+                  "value": "Normal"
+                },
+                {
+                  "name": "Bird Alert",
+                  "value": "Bird Alert"
+                },
+                {
+                  "name": "Fish Alert",
+                  "value": "Fish Alert"
+                },
+                {
+                  "name": "Both Alert",
+                  "value": "Both Alert"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "ClosingBirdStock",
+              "displayName": "ClosingBirdStock",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "ClosingFishStock",
+              "displayName": "ClosingFishStock",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "ExpectedBirdFeedKg",
+              "displayName": "ExpectedBirdFeedKg",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "ExpectedFishFeedKg",
+              "displayName": "ExpectedFishFeedKg",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "ActualFeedUsedKg",
+              "displayName": "ActualFeedUsedKg",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "FeedVariancePercent",
+              "displayName": "FeedVariancePercent",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Attachment Summary",
+              "displayName": "Attachment Summary",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "typecast": true
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        880,
+        -32
+      ],
+      "id": "1f22f5ca-e6ef-498f-bf75-8e6e884a1c56",
+      "name": "Create a record",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "bfgaeWFCr8SSeACE",
+          "name": "Airtable Personal Access Token account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Yesterday's closing stock becomes today's opening totals\nconst totalBirds = $json.fields?.ClosingBirdStock ?? 0;\nconst totalFish = $json.fields?.ClosingFishStock ?? 0;\n\n// Deaths still come from today's form submission\nconst birdDeaths = $('Edit Fields').item.json.birdDeaths;\nconst fishDeaths = $('Edit Fields').item.json.fishDeaths;\nconst eggsCollected = $('Edit Fields').item.json.eggsCollected;\nconst pondId = $('Edit Fields').item.json.pondId;\nconst avgFishWeight = $('Edit Fields').item.json.avgFishWeight;\nconst date = $('Edit Fields').item.json.date;\n\nconst birdMortalityRate = totalBirds > 0 ? (birdDeaths / totalBirds) * 100 : 0;\nconst fishMortalityRate = totalFish > 0 ? (fishDeaths / totalFish) * 100 : 0;\n\nconst THRESHOLD = 2;\n\nlet alertStatus = \"Normal\";\nif (birdMortalityRate >= THRESHOLD && fishMortalityRate >= THRESHOLD) {\n  alertStatus = \"Both Alert\";\n} else if (birdMortalityRate >= THRESHOLD) {\n  alertStatus = \"Bird Alert\";\n} else if (fishMortalityRate >= THRESHOLD) {\n  alertStatus = \"Fish Alert\";\n}\n\nreturn {\n  date,\n  eggsCollected,\n  totalBirds,\n  birdDeaths,\n  birdMortalityRate: Math.round(birdMortalityRate * 100) / 100,\n  pondId,\n  avgFishWeight,\n  totalFish,\n  fishDeaths,\n  fishMortalityRate: Math.round(fishMortalityRate * 100) / 100,\n  alertStatus\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        400,
+        -32
+      ],
+      "id": "68da137b-10bc-45e7-9735-942c1997040e",
+      "name": "Calculate mortality rates",
+      "notesInFlow": true,
+      "notes": "The threshold is 2"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "PC3TaT0VInkhccM1",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/PC3TaT0VInkhccM1",
+          "cachedResultName": "Alert Router"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {
+          "waitForSubWorkflow": false
+        }
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1344,
+        -32
+      ],
+      "id": "ab7631d8-3401-4fe2-86c6-9f4dd3e412e9",
+      "name": "Call 'Alert Router'",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "glAPuLIymSuv0KvL",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/glAPuLIymSuv0KvL",
+          "cachedResultName": "Stock Reconciliation sub-workflow"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1136,
+        -32
+      ],
+      "id": "42eaf438-e6f9-4d9f-bdf1-52d169e7ede2",
+      "name": "Call 'Stock Reconciliation sub-workflow'",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appjtNC5kvcpxWBKa",
+          "mode": "list",
+          "cachedResultName": "Farm Operations",
+          "cachedResultUrl": "https://airtable.com/appjtNC5kvcpxWBKa"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblqEgjkTUAnAt2nZ",
+          "mode": "list",
+          "cachedResultName": "Production Log",
+          "cachedResultUrl": "https://airtable.com/appjtNC5kvcpxWBKa/tblqEgjkTUAnAt2nZ"
+        },
+        "filterByFormula": "IS_SAME({Date}, DATEADD(TODAY(), -1, 'days'), 'day')",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        160,
+        -32
+      ],
+      "id": "7aeb857c-ff84-4ad7-aa22-cef4a9737d4e",
+      "name": "Search records",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "bfgaeWFCr8SSeACE",
+          "name": "Airtable Personal Access Token account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "const BIRD_FEED_PER_BIRD_KG = 0.12;\nconst FISH_FEED_PERCENT_BIOMASS = 0.04;\nconst FEED_VARIANCE_THRESHOLD = 15;\n\nconst totalBirds = $json.totalBirds;\nconst totalFish = $json.totalFish;\nconst avgFishWeight = $('Edit Fields').item.json.avgFishWeight;\n\nconst actualBirdFeedUsed = $('Edit Fields').item.json.actualBirdFeedUsed ?? 0;\nconst actualFishFeedUsed = $('Edit Fields').item.json.actualFishFeedUsed ?? 0;\n\nconst expectedBirdFeedKg = totalBirds * BIRD_FEED_PER_BIRD_KG;\nconst totalFishBiomassKg = totalFish * avgFishWeight;\nconst expectedFishFeedKg = totalFishBiomassKg * FISH_FEED_PERCENT_BIOMASS;\n\nconst totalExpectedFeed = expectedBirdFeedKg + expectedFishFeedKg;\nconst totalActualFeed = actualBirdFeedUsed + actualFishFeedUsed;\n\nconst feedVariancePercent = totalExpectedFeed > 0\n  ? ((totalActualFeed - totalExpectedFeed) / totalExpectedFeed) * 100\n  : 0;\n\n// Read the alertStatus already decided by the mortality Code node\nlet alertStatus = $json.alertStatus;\n\nconst feedVarianceAlert = Math.abs(feedVariancePercent) >= FEED_VARIANCE_THRESHOLD;\n\nif (feedVarianceAlert && alertStatus !== \"Normal\") {\n  alertStatus = alertStatus + \" + Feed Variance\";\n} else if (feedVarianceAlert) {\n  alertStatus = \"Feed Variance Alert\";\n}\n\nreturn {\n  ...$json,\n  expectedBirdFeedKg: Math.round(expectedBirdFeedKg * 100) / 100,\n  expectedFishFeedKg: Math.round(expectedFishFeedKg * 100) / 100,\n  actualFeedUsedKg: Math.round(totalActualFeed * 100) / 100,\n  feedVariancePercent: Math.round(feedVariancePercent * 100) / 100,\n  alertStatus\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        608,
+        -32
+      ],
+      "id": "81d6224c-086b-4fdd-9f38-28db52392609",
+      "name": "Calculate expected feeding",
+      "notesInFlow": true,
+      "notes": "if feed variance exceeds 15%"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Search records",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a record": {
+      "main": [
+        [
+          {
+            "node": "Call 'Stock Reconciliation sub-workflow'",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculate mortality rates": {
+      "main": [
+        [
+          {
+            "node": "Calculate expected feeding",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call 'Alert Router'": {
+      "main": [
+        []
+      ]
+    },
+    "Call 'Stock Reconciliation sub-workflow'": {
+      "main": [
+        [
+          {
+            "node": "Call 'Alert Router'",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search records": {
+      "main": [
+        [
+          {
+            "node": "Calculate mortality rates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculate expected feeding": {
+      "main": [
+        [
+          {
+            "node": "Create a record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "3d0494b0-e3f8-4902-a47e-3ccbc8cdc593",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e87efae1c50ccaa3fe6b24c7b478b0c958003e76127c57c9b28fb1381f5f2812"
+  },
+  "id": "b3QMZCDvUXTNScSK",
+  "tags": []
+}

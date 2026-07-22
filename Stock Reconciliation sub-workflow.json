@@ -1,0 +1,365 @@
+{
+  "name": "Stock Reconciliation sub-workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -224,
+        -128
+      ],
+      "id": "d490c233-e458-4ef2-bc74-b09f735dab2c",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "appjtNC5kvcpxWBKa",
+          "mode": "list",
+          "cachedResultName": "Farm Operations",
+          "cachedResultUrl": "https://airtable.com/appjtNC5kvcpxWBKa"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblqEgjkTUAnAt2nZ",
+          "mode": "list",
+          "cachedResultName": "Production Log",
+          "cachedResultUrl": "https://airtable.com/appjtNC5kvcpxWBKa/tblqEgjkTUAnAt2nZ"
+        },
+        "filterByFormula": "IS_SAME({Date}, DATEADD(TODAY(), -1, 'days'), 'day')",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        -16,
+        -128
+      ],
+      "id": "e3c98849-7fe9-4eb1-8a7a-e0e013a25c46",
+      "name": "Search records",
+      "notesInFlow": true,
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "bfgaeWFCr8SSeACE",
+          "name": "Airtable Personal Access Token account"
+        }
+      },
+      "onError": "continueRegularOutput",
+      "notes": "This airtable formula finds the record where Date equals yesterday"
+    },
+    {
+      "parameters": {
+        "jsCode": "const yesterdayBirdStock = $input.first().json.fields?.ClosingBirdStock ?? 0;\nconst yesterdayFishStock = $input.first().json.fields?.ClosingFishStock ?? 0;\n\nconst todayBirdDeaths = $('When Executed by Another Workflow').item.json.fields?.BirdDeaths ?? 0;\nconst todayFishDeaths = $('When Executed by Another Workflow').item.json.fields?.FishDeaths ?? 0;\n\nconst newBirdStock = yesterdayBirdStock - todayBirdDeaths;\nconst newFishStock = yesterdayFishStock - todayFishDeaths;\n\nreturn {\n  closingBirdStock: newBirdStock,\n  closingFishStock: newFishStock,\n  recordId: $('When Executed by Another Workflow').item.json.id\n};"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        192,
+        -128
+      ],
+      "id": "14d76e70-0485-47fa-aeb0-71f63c968311",
+      "name": "Calculate new stock",
+      "notesInFlow": true,
+      "onError": "continueRegularOutput",
+      "notes": "Yesterdaystock-todaydeath"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appjtNC5kvcpxWBKa",
+          "mode": "list",
+          "cachedResultName": "Farm Operations",
+          "cachedResultUrl": "https://airtable.com/appjtNC5kvcpxWBKa"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblqEgjkTUAnAt2nZ",
+          "mode": "list",
+          "cachedResultName": "Production Log",
+          "cachedResultUrl": "https://airtable.com/appjtNC5kvcpxWBKa/tblqEgjkTUAnAt2nZ"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "ClosingBirdStock": "={{ $json.closingBirdStock }}",
+            "ClosingFishStock": "={{ $json.closingFishStock }}",
+            "id": "={{ $json.recordId }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "dateTime",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "EggsCollected",
+              "displayName": "EggsCollected",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "TotalBirds",
+              "displayName": "TotalBirds",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "BirdDeaths",
+              "displayName": "BirdDeaths",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "BirdMortalityRate",
+              "displayName": "BirdMortalityRate",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "PondID",
+              "displayName": "PondID",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "AvgFishWeight",
+              "displayName": "AvgFishWeight",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "TotalFish",
+              "displayName": "TotalFish",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "FishDeaths",
+              "displayName": "FishDeaths",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "FishMortalityRate",
+              "displayName": "FishMortalityRate",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "AlertStatus",
+              "displayName": "AlertStatus",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Normal",
+                  "value": "Normal"
+                },
+                {
+                  "name": "Bird Alert",
+                  "value": "Bird Alert"
+                },
+                {
+                  "name": "Fish Alert",
+                  "value": "Fish Alert"
+                },
+                {
+                  "name": "Both Alert",
+                  "value": "Both Alert"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "ClosingBirdStock",
+              "displayName": "ClosingBirdStock",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "ClosingFishStock",
+              "displayName": "ClosingFishStock",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Attachment Summary",
+              "displayName": "Attachment Summary",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "typecast": false
+        }
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.2,
+      "position": [
+        400,
+        -128
+      ],
+      "id": "df74fea2-5bdc-40ed-a2c4-b46c3e64232a",
+      "name": "Update record",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "bfgaeWFCr8SSeACE",
+          "name": "Airtable Personal Access Token account"
+        }
+      },
+      "onError": "continueRegularOutput"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Search records",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search records": {
+      "main": [
+        [
+          {
+            "node": "Calculate new stock",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculate new stock": {
+      "main": [
+        [
+          {
+            "node": "Update record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "eb2e8b0e-c8de-4c5a-9702-7f5d6a75f4e1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e87efae1c50ccaa3fe6b24c7b478b0c958003e76127c57c9b28fb1381f5f2812"
+  },
+  "id": "glAPuLIymSuv0KvL",
+  "tags": []
+}
