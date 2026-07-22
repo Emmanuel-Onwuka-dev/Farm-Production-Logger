@@ -84,27 +84,27 @@ that logs, calculates, reconciles, and alerts automatically.
 ## Workflow structure
 
 \```
-Production logger 2.0 (main)
-├─ On form submission
-├─ Edit Fields
-├─ Search records          (yesterday's stock)
-├─ Calculate mortality rates
-├─ Calculate expected feeding
-├─ Create a record
-├─ Call: Stock Reconciliation sub-workflow
-└─ Call: Alert Router sub-workflow
+- Production logger 2.0 (main)
+- ├─ On form submission
+- ├─ Edit Fields
+- ├─ Search records          (yesterday's stock)
+- ├─ Calculate mortality rates
+- ├─ Calculate expected feeding
+- ├─ Create a record
+- ├─ Call: Stock Reconciliation sub-workflow
+- └─ Call: Alert Router sub-workflow
 
-Stock Reconciliation sub-workflow
-├─ When Executed by Another Workflow
-├─ Search records           (Airtable formula: yesterdaystock - todaydeath)
-├─ Calculate new stock
-└─ Update record
+- Stock Reconciliation sub-workflow
+- ├─ When Executed by Another Workflow
+- ├─ Search records           (Airtable formula: yesterdaystock - todaydeath)
+- ├─ Calculate new stock
+- └─ Update record
 
-Alert Router sub-workflow
-├─ When Executed by Another Workflow
-├─ Check for Alerts (IF node)
-   ├─ true  → Urgent Alert (Telegram)
-   └─ false → Routine Summary (Telegram)
+- Alert Router sub-workflow
+- ├─ When Executed by Another Workflow
+- ├─ Check for Alerts (IF node)
+ -  ├─ true  → Urgent Alert (Telegram)
+  -  └─ false → Routine Summary (Telegram)
 \```
 
 ---
